@@ -1,0 +1,12 @@
+Instancia: instancia_B | clientes = 15 | dias = 3 | rutas = 3 | Q = 75
+Distancia total = 466.8 | gap = 0.00 % | tiempo = 89.4 s
+
+Dia 1 | Ruta 1 | carga 24/75 | D -> 4(llega 18) -> 12(llega 36) -> 10(llega 53) -> 1(llega 69) -> 5(llega 106) -> 6(llega 117) -> 7(llega 130) -> 8(llega 145) -> D
+Dia 1 | Ruta 2 | carga 10/75 | D -> 3(llega 83) -> 2(llega 99) -> 9(llega 182) -> 11(llega 195) -> D
+Dia 1 | Ruta 3 | carga 47/75 | D -> 15(llega 12) -> 13(llega 49) -> 14(llega 133) -> D
+Dia 2 | Ruta 1 | carga 74/75 | D -> 4(llega 18) -> 12(llega 36) -> 10(llega 53) -> 1(llega 69) -> 5(llega 106) -> 6(llega 117) -> 7(llega 130) -> 8(llega 145) -> D
+Dia 2 | Ruta 2 | carga 75/75 | D -> 3(llega 83) -> 2(llega 99) -> 9(llega 182) -> 11(llega 195) -> D
+Dia 2 | Ruta 3 | carga 62/75 | D -> 15(llega 12) -> 13(llega 49) -> 14(llega 133) -> D
+Dia 3 | Ruta 1 | carga 74/75 | D -> 4(llega 18) -> 12(llega 36) -> 10(llega 53) -> 1(llega 69) -> 5(llega 106) -> 6(llega 117) -> 7(llega 130) -> 8(llega 145) -> D
+Dia 3 | Ruta 2 | carga 75/75 | D -> 3(llega 83) -> 2(llega 99) -> 9(llega 182) -> 11(llega 195) -> D
+Dia 3 | Ruta 3 | carga 55/75 | D -> 15(llega 12) -> 13(llega 49) -> 14(llega 133) -> D
