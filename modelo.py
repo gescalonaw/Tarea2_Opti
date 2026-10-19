@@ -9,55 +9,55 @@ Contiene:
 
 Nodos: 0 = deposito (salida), 1..n = clientes, n+1 = deposito (retorno).
 Los indices parten en 0: dia 1 = t=0, ruta 1 = r=0.
+
+Lee el formato de instancia que genera el script 
+(carpeta generador/): un JSON con n, D, R, Q, aW, bW,
+clientes (con q_dia, st, a/b, tiene_ventana) y las matrices td/tt ya
+calculadas. Es el formato de instancias/instancia_A.json e instancia_B.json.
 """
 import json
-import math
 import gurobipy as gp
 from gurobipy import GRB
 
 
 def leer_instancia(archivo):
+    """Lee una instancia en el formato de instancia_A.json / instancia_B.json
+    (generador del compañero): n, D, R, Q, aW, bW, clientes con
+    q_dia/st/a/b/tiene_ventana, y las matrices td/tt ya calculadas.
+    """
     with open(archivo, encoding='utf-8') as f:
         datos = json.load(f)
 
     d = {}
     d['nombre'] = datos.get('nombre', 'instancia')
-    n = len(datos['clientes'])      # numero de clientes
-    T = datos['num_dias']           # dias
-    R = datos['num_rutas']          # rutas por dia
+    n = datos['n']
+    T = datos['D']
+    R = datos['R']
     d['n'], d['T'], d['R'] = n, T, R
-    d['Q'] = datos['capacidad']
-    d['apertura'] = datos['deposito']['apertura']
-    d['cierre'] = datos['deposito']['cierre']
+    d['Q'] = datos['Q']
+    d['apertura'] = datos['aW']
+    d['cierre'] = datos['bW']
 
-    # coordenadas: deposito de salida, clientes, deposito de retorno
-    xc = [datos['deposito']['x']] + [c['x'] for c in datos['clientes']] + [datos['deposito']['x']]
-    yc = [datos['deposito']['y']] + [c['y'] for c in datos['clientes']] + [datos['deposito']['y']]
+    d['dist'] = datos['td']
+    d['tv'] = datos['tt']
 
-    # distancia y tiempo de viaje entre nodos
-    N = range(n + 2)
-    dec = datos.get('decimales_distancia', 1)
-    vel = datos.get('velocidad', 1)
-    d['dist'] = [[round(math.hypot(xc[i] - xc[j], yc[i] - yc[j]), dec) for j in N] for i in N]
-    d['tv'] = [[d['dist'][i][j] / vel for j in N] for i in N]
+    clientes = datos['clientes']
 
-    # demanda q[i][t] y servicio s[i][t] (el JSON admite un numero o una lista por dia)
     def por_dia(valor):
         if isinstance(valor, list):
             return valor
         return [valor] * T
 
-    d['q'] = [[0] * T] + [por_dia(c['demanda']) for c in datos['clientes']] + [[0] * T]
-    d['s'] = [[0] * T] + [por_dia(c.get('servicio', 0)) for c in datos['clientes']] + [[0] * T]
+    d['q'] = [[0] * T] + [por_dia(c['q_dia']) for c in clientes] + [[0] * T]
+    d['s'] = [[0] * T] + [por_dia(c.get('st', 0)) for c in clientes] + [[0] * T]
 
     # ventanas de tiempo [a_i, b_i] (solo algunos clientes tienen)
     d['a'] = [0] * (n + 2)
     d['b'] = [0] * (n + 2)
     d['con_ventana'] = []
-    for i in range(1, n + 1):
-        v = datos['clientes'][i - 1].get('ventana')
-        if v:
-            d['a'][i], d['b'][i] = v
+    for i, c in enumerate(clientes, start=1):
+        if c.get('tiene_ventana'):
+            d['a'][i], d['b'][i] = c['a'], c['b']
             d['con_ventana'].append(i)
 
     # Big-M: una constante suficientemente grande
