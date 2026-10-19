@@ -1,5 +1,5 @@
 import numpy as np
-import generate_instances as gen
+import generador_instancias as gen
 from rich import print
 
 
