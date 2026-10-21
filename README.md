@@ -39,6 +39,8 @@ La carpeta `.venv/` está en `.gitignore`, así que no se sube al repo. Alternat
 .
 ├── modelo.py                          # lee la instancia y arma el modelo (variables, restricciones)
 ├── resolver.py                        # corre el modelo end-to-end y guarda resultados
+├── configuraciones_solver.py          # compara baseline vs 5 variaciones de parámetros (sección 4.2)
+├── relajacion.py                      # relajación continua y brecha de integralidad (sección 4.1)
 ├── sensibilidad.py                    # análisis de sensibilidad de Q con Model.fixed()
 ├── tuning.py                          # ajuste automático de parámetros con Model.tune()
 ├── generador/
@@ -46,9 +48,10 @@ La carpeta `.venv/` está en `.gitignore`, así que no se sube al repo. Alternat
 │       └── instancias/
 │           ├── instancia_A.json
 │           └── instancia_B.json
-└── resultados/                        # se crea sola al correr resolver.py
+└── resultados/                        # se crea sola al correr los scripts
     ├── instancia_A.txt
-    └── instancia_B.txt
+    ├── instancia_B.txt
+    └── configuraciones_solver.txt
 ```
 
 ## Cómo correrlo
@@ -84,6 +87,46 @@ python resolver.py ruta/a/tu_instancia.json
 ```
 
 No hace falta modificar `resolver.py` ni `modelo.py` para esto — el nombre de la instancia y sus resultados se toman directamente del JSON.
+
+## Configuraciones del solver
+
+`configuraciones_solver.py` resuelve el modelo entero 6 veces sobre **instancia_A** (la instancia de referencia que pide el enunciado para esta comparación): una vez con la configuración por defecto (**Base**) y luego cambiando **un solo parámetro a la vez**, dejando todo lo demás en su valor por defecto:
+
+- `Cuts = 0`
+- `Presolve = 0`
+- `MIPFocus = 1`
+- `MIPFocus = 3`
+- `Heuristics = 0`
+
+En las 6 corridas se mantiene fijo `Threads = 1` y `TimeLimit = 600`. Cada corrida arma un modelo **nuevo** (no reutiliza el mismo objeto `Model` entre configuraciones), para que los parámetros y el estado de búsqueda de una corrida no contaminen la siguiente.
+
+```bash
+python configuraciones_solver.py
+```
+
+No recibe argumentos — la instancia y los parámetros fijos ya están definidos en el script. Imprime tiempo, gap final y valor objetivo de cada configuración a medida que van terminando, y guarda el resumen de las 6 en `resultados/configuraciones_solver.txt`.
+
+Como son 6 corridas y cada una puede tardar hasta 600 s si no cierra el gap antes, el script completo puede demorar varios minutos.
+
+## Relajación continua
+
+`relajacion.py` calcula la relajación continua del modelo (quitando la integralidad de las variables binarias con `Model.relax()`) y la brecha de integralidad respecto al óptimo entero, sobre **instancia_A**:
+
+```bash
+python relajacion.py
+```
+
+No recibe argumentos — la ruta de la instancia (`generador/data/instancias/instancia_A.json`) está fija dentro del script. Imprime en consola:
+
+```
+z_LP = <valor> | z* = <valor> | brecha de integralidad = <valor> %
+```
+
+- **z\*** es el óptimo entero (resuelve el modelo normal, igual que `resolver.py`).
+- **z_LP** es el valor óptimo de la relajación continua (el mismo modelo sin exigir integralidad).
+- **brecha** es `100 * (z* − z_LP) / z*`: qué tan lejos está el LP del óptimo entero real.
+
+Este script no guarda archivo de salida, solo imprime en consola. Si quieren correrlo también sobre instancia_B, hay que editar manualmente la ruta del archivo dentro de `relajacion.py` (no toma la instancia por línea de comandos como sí lo hacen `resolver.py`, `sensibilidad.py` y `tuning.py`).
 
 ## Análisis de sensibilidad de Q
 
@@ -123,5 +166,3 @@ python tuning.py --opciones "MIPFocus=1;Heuristics=0.3"   # caso base manual
 ```
 
 Opciones principales: `--limite-solve` (TimeLimit por solve), `--tiempo-tune` (TuneTimeLimit), `--trials` (TuneTrials), `--results` (TuneResults), `--seed`, `--criterio` (TuneCriterion), `--threads` / `--hilos-tune`, `--no-verificar` y `--salida-tuner` (guarda el detalle del tuner). El reporte se guarda en `resultados/tuning_<nombre_instancia>.txt`.
-
-
