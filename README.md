@@ -14,6 +14,25 @@ pip install gurobipy
 
 Si Gurobi está instalado pero no reconoce la licencia, corre `grbgetkey <tu-clave>` siguiendo las instrucciones que te llegan al activar la licencia académica.
 
+### Entorno virtual del repo
+
+Si tu `python` del PATH no tiene `gurobipy` (por ejemplo, `ModuleNotFoundError: No module named 'gurobipy'`, o el error `externally-managed-environment` de MSYS2), usa el entorno virtual `.venv` del repo, que apunta al Python oficial y ya trae `gurobipy`:
+
+```powershell
+.\.venv\Scripts\python.exe resolver.py generador/data/instancias/instancia_A.json
+.\.venv\Scripts\python.exe sensibilidad.py generador/data/instancias/instancia_A.json
+.\.venv\Scripts\python.exe tuning.py generador/data/instancias/instancia_A.json
+```
+
+Para recrearlo desde cero (si clonas el repo en otro equipo):
+
+```powershell
+py -3.13 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install gurobipy
+```
+
+La carpeta `.venv/` está en `.gitignore`, así que no se sube al repo. Alternativa sin venv: usar `py -3.13` directamente, que apunta al Python oficial donde ya está instalado `gurobipy`.
+
 ## Estructura relevante del repo
 
 ```
@@ -21,6 +40,7 @@ Si Gurobi está instalado pero no reconoce la licencia, corre `grbgetkey <tu-cla
 ├── modelo.py                          # lee la instancia y arma el modelo (variables, restricciones)
 ├── resolver.py                        # corre el modelo end-to-end y guarda resultados
 ├── sensibilidad.py                    # análisis de sensibilidad de Q con Model.fixed()
+├── tuning.py                          # ajuste automático de parámetros con Model.tune()
 ├── generador/
 │   └── data/
 │       └── instancias/
@@ -84,5 +104,23 @@ python sensibilidad.py generador/data/instancias/instancia_B.json 60
 ```
 
 Guarda el reporte en `resultados/sensibilidad_<nombre_instancia>.txt`.
+
+## Ajuste automático de parámetros (Model.tune())
+
+`tuning.py` corre el mismo modelo que `resolver.py` (misma CLI de instancia) y ajusta automáticamente los parámetros del solver con `Model.tune()`:
+
+1. Resuelve el MIP con las **opciones manuales** (editables en el archivo o por `--opciones`) para tener una línea base reproducible.
+2. Corre `Model.tune()`, que prueba distintos conjuntos de parámetros y se queda con los que mejoran el desempeño. El criterio primario del tuner es minimizar el tiempo hasta optimalidad certificada; si el modelo no cierra dentro del límite, usa un criterio secundario automático (gap u objetivo).
+3. Reporta el caso base y **todos** los conjuntos devueltos, marcando el mejor y las diferencias contra el caso base. Recuerda que el resultado `0` es siempre el caso base y el `1` el mejor hallado (por eso se retienen al menos 2).
+4. Verifica el mejor conjunto: lo re-resuelve sobre la instancia, lo compara contra las opciones manuales, repite la corrida para chequear reproducibilidad y deja el conjunto listo para pegar en `resolver.py`.
+
+```bash
+python tuning.py generador/data/instancias/instancia_A.json
+python tuning.py generador/data/instancias/instancia_B.json --tiempo-tune 300
+python tuning.py generador/data/instancias/instancia_A.json --limite-solve 120 --trials 2 --seed 7
+python tuning.py --opciones "MIPFocus=1;Heuristics=0.3"   # caso base manual
+```
+
+Opciones principales: `--limite-solve` (TimeLimit por solve), `--tiempo-tune` (TuneTimeLimit), `--trials` (TuneTrials), `--results` (TuneResults), `--seed`, `--criterio` (TuneCriterion), `--threads` / `--hilos-tune`, `--no-verificar` y `--salida-tuner` (guarda el detalle del tuner). El reporte se guarda en `resultados/tuning_<nombre_instancia>.txt`.
 
 

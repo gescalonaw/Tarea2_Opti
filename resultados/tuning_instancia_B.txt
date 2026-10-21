@@ -1,0 +1,26 @@
+Instancia: instancia_B | clientes = 15 | dias = 3 | rutas = 3 | Q = 75
+Presupuesto: limite por solve = 600 s | tiempo de tune = 300 s | threads solve = 1 | threads tune = todos
+
+========================================================================
+1. CASO BASE (opciones manuales)
+========================================================================
+Parametros: Cuts=2, Heuristics=0.2, MIPFocus=1, Threads=1, TimeLimit=600
+Distancia = 466.8 | cota = 445.7 | gap = 4.52 % | tiempo = 600.0 s | nodos = 378325.0 | estado = TIME_LIMIT
+
+========================================================================
+2. Model.tune()
+========================================================================
+TuneTimeLimit = 300 s | TuneResults = -1 | TuneTrials = 0 | TuneCriterion = -1 | TuneMetric = -1
+(el tuner decide solo que parametros probar; TuneResults >= 2 para obtener el mejor)
+
+TuneResultCount = 0
+ADVERTENCIA: el tuner no devolvio resultados (se corto por TuneTimeLimit o se
+interrumpio). En gurobipy 13 no hay Model.TuneStatus para distinguirlo; sube
+--tiempo-tune o --trials, o corre sin --no-verificar en un equipo con mas nucleos.
+
+========================================================================
+3. Conjuntos de parametros devueltos por el tuner
+========================================================================
+
+Diferencias contra el caso base del tuner:
+
