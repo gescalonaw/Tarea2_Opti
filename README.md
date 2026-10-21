@@ -118,6 +118,7 @@ Guarda el reporte en `resultados/sensibilidad_<nombre_instancia>.txt`.
 python tuning.py generador/data/instancias/instancia_A.json
 python tuning.py generador/data/instancias/instancia_B.json --tiempo-tune 300
 python tuning.py generador/data/instancias/instancia_A.json --limite-solve 120 --trials 2 --seed 7
+python tuning.py generador/data/instancias/instancia_B.json --limite-solve 120 --trials 2 --seed 7
 python tuning.py --opciones "MIPFocus=1;Heuristics=0.3"   # caso base manual
 ```
 

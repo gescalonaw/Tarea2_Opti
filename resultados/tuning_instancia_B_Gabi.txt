@@ -1,0 +1,42 @@
+Instancia: instancia_B_Gabi | clientes = 15 | dias = 3 | rutas = 3 | Q = 75
+Presupuesto: limite por solve = 120 s | tiempo de tune = 300 s | threads solve = 1 | threads tune = todos
+
+========================================================================
+1. CASO BASE (opciones manuales)
+========================================================================
+Parametros: Cuts=2, Heuristics=0.2, MIPFocus=1, Seed=7, Threads=1, TimeLimit=120.0
+Distancia = 466.8 | cota = 402.0 | gap = 13.87 % | tiempo = 120.0 s | nodos = 70464.0 | estado = TIME_LIMIT
+
+========================================================================
+2. Model.tune()
+========================================================================
+TuneTimeLimit = 300 s | TuneResults = -1 | TuneTrials = 2 | TuneCriterion = -1 | TuneMetric = -1
+(el tuner decide solo que parametros probar; TuneResults >= 2 para obtener el mejor)
+
+TuneResultCount = 1
+NOTA: solo vino el caso base; puede que el tuner no haya encontrado mejoras.
+
+========================================================================
+3. Conjuntos de parametros devueltos por el tuner
+========================================================================
+CASO BASE del tuner: Cuts=2, Heuristics=0.2, MIPFocus=1
+
+Diferencias contra el caso base del tuner:
+
+========================================================================
+4. Verificacion del mejor conjunto sobre la instancia
+========================================================================
+corrida                     distancia       cota      gap   tiempo      nodos  optimo
+manuales (caso base)            466.8      402.0  13.87 %    120.0    70464.0   False
+mejor conjunto (tune)           466.8      439.5   5.85 %    120.0   104127.0   False
+mejor conjunto (2a vez)         466.8      436.3   6.52 %    120.0   100001.0   False
+
+Mejora del mejor conjunto en 'distancia' respecto de las manuales: +0.00 %
+Reproducibilidad (misma corrida, mismo Seed = 7): distancia igual, tiempo 120.0 s vs 120.0 s
+
+Conjunto de parametros recomendado (listo para pegar en resolver.py):
+  Cuts=2, Heuristics=0.2, MIPFocus=1, Seed=7, Threads=1, TimeLimit=120
+
+Interpretacion: el tuner NO encontro mejoras sobre las opciones manuales
+(solo devolvio el caso base). Tu configuracion actual ya es la recomendada;
+no hay una mejora medible que atribuir al tune en este presupuesto.
