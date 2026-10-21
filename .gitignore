@@ -1,0 +1,6 @@
+# Entorno virtual local (no se sube al repo)
+.venv/
+
+# Cache de Python
+__pycache__/
+*.pyc
