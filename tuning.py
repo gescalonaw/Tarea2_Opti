@@ -373,8 +373,13 @@ def main():
         emitir("  " + ", ".join(f"{k}={v:g}" if isinstance(v, float) else f"{k}={v}"
                                 for k, v in sorted(conj_mejor.items())))
         emitir("")
-        if res_mejor["optimo"] and base["optimo"]:
-            emitir("Interpretacion: ambas configuraciones cierran el gap; el tuner mejora el tiempo.")
+        if n <= 1:
+            emitir("Interpretacion: el tuner NO encontro mejoras sobre las opciones manuales")
+            emitir("(solo devolvio el caso base). Tu configuracion actual ya es la recomendada;")
+            emitir("no hay una mejora medible que atribuir al tune en este presupuesto.")
+        elif res_mejor["optimo"] and base["optimo"]:
+            emitir("Interpretacion: ambas configuraciones cierran el gap. Compara 'tiempo':")
+            emitir("si el mejor conjunto tarda menos, esa es la mejora del tune.")
         elif not res_mejor["optimo"]:
             emitir("Interpretacion: el modelo no cierra dentro del limite. Compara 'distancia' y 'cota':")
             emitir("una cota mas alta a igual presupuesto indica mejor desempeno del conjunto elegido.")
