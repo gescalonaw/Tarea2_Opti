@@ -1,0 +1,7 @@
+# Misma version mayor de Gurobi que el notebook de apoyo de la TC3 (13.0.1).
+# Si tu licencia academica es de otra version, cambia esta linea (ej. gurobipy==12.*).
+gurobipy==13.0.*
+cplex
+docplex
+matplotlib
+numpy
