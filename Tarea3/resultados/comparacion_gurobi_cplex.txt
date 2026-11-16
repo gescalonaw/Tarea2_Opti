@@ -1,0 +1,10 @@
+time_limit=600 s, threads=defecto, repeticiones por LP=5
+instancia | tipo | solver | objetivo | tiempo_s | nodos | gap | cota | estado | solucion_valida
+instancia_A | Relajación | CPLEX | 156.4535 | 0.0188 | 0 | 0.000000 | - | optimal | -
+instancia_A | Relajación | Gurobi | 156.4535 | 0.0270 | 0 | 0.000000 | - | OPTIMAL | -
+instancia_A | Entero | CPLEX | 590.9375 | 600.0780 | 358510 | 0.144093 | 505.7877 | time limit exceeded | True
+instancia_A | Entero | Gurobi | 590.9375 | 600.0810 | 323487 | 0.100638 | 531.4667 | TIME_LIMIT | True
+instancia_B | Relajación | CPLEX | 111.9455 | 0.0096 | 0 | 0.000000 | - | optimal | -
+instancia_B | Relajación | Gurobi | 111.9455 | 0.0188 | 0 | 0.000000 | - | OPTIMAL | -
+instancia_B | Entero | CPLEX | 398.2182 | 600.0940 | 1130675 | 0.202146 | 317.7202 | time limit exceeded | True
+instancia_B | Entero | Gurobi | 397.3426 | 600.0560 | 1346332 | 0.090740 | 361.2876 | TIME_LIMIT | True
